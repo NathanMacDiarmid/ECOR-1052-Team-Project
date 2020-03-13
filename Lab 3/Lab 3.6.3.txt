@@ -1,0 +1,101 @@
+import RPi.GPIO as GPIO
+import time
+import lcd_2ic as lcd
+
+def printLCD(string1, string2):
+    lcd.printer(string1, string2)
+def setup():
+    lcd.lcd_init()
+
+GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+GPIO.setup(8, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+
+control_pins = [21, 20, 23, 13]
+
+# PIN SETUP
+
+for pin in control_pins:
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, 0)
+    
+printLCD("Set up complete.", "Press a button.")
+    
+try:
+    
+    while True:
+       
+        if (GPIO.input(18) == GPIO.HIGH):
+            
+            # LED
+
+            GPIO.output(23, GPIO.HIGH)
+            
+            # BUZZER
+
+            pin = GPIO.PWM(13, 500)
+            pin.start(0)
+            time.sleep(1)
+
+            pin.ChangeDutyCycle(70)
+            time.sleep(1)
+            pin.stop()
+            
+             # MOTOR
+            pin = GPIO.PWM(20, 50)
+            pin.start(0)
+            time.sleep(1)
+            
+            percent = 0
+            while percent < 36:
+                pin.ChangeDutyCycle(percent)
+                time.sleep(0.01)
+                percent += 1
+                printLCD("The motor is on.", "Clockwise.")
+            printLCD("Please,", "Press a button.")   
+            pin.stop()
+            GPIO.output(23, GPIO.LOW)
+            
+        elif (GPIO.input(8) == GPIO.HIGH):
+            
+            # LED
+
+            GPIO.output(23, GPIO.HIGH)
+            
+            # BUZZER
+
+            pin = GPIO.PWM(13, 500)
+            pin.start(0)
+            time.sleep(1)
+
+            pin.ChangeDutyCycle(70)
+            time.sleep(1)
+            pin.stop()
+
+             # MOTOR
+             
+            pin = GPIO.PWM(21, 50)
+            pin.start(0)
+            time.sleep(1)
+            
+            percent = 0
+            
+            while percent < 36:
+                pin.ChangeDutyCycle(percent)
+                time.sleep(0.01)
+                percent += 1
+                printLCD("The motor is on.", "CounterClockwise.")
+            printLCD("Please,", "Press a button.")
+            pin.stop()
+            GPIO.output(23, GPIO.LOW)
+    
+except KeyboardInterrupt:
+    pass
+
+printLCD("The program has", "been exited.")
+
+
+GPIO.cleanup()
+

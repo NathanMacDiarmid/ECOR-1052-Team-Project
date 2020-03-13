@@ -1,0 +1,22 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BCM)
+
+control_pins = [21, 20]
+
+for pin in control_pins:
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, 0)
+
+GPIO.output(20,GPIO.HIGH)
+time.sleep(1)
+GPIO.output(20,GPIO.LOW)
+time.sleep(2)
+
+GPIO.output(21,GPIO.HIGH)
+time.sleep(1)
+GPIO.output(21,GPIO.LOW)
+GPIO.cleanup()

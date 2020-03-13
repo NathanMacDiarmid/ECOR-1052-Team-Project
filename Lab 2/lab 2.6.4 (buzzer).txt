@@ -1,0 +1,39 @@
+import time
+import RPi.GPIO as GPIO
+import lcd_i2c
+
+def printLCD(string1, string2):
+    lcd_i2c.printer(string1, string2)
+def setup():
+    lcd_i2c.lcd_init()
+
+
+GPIO.setmode(GPIO.BCM) 
+GPIO.setup(13, GPIO.OUT) 
+
+
+pin = GPIO.PWM(13,50) 
+pin.start(0) 
+time.sleep(1) 
+
+pin.ChangeDutyCycle(20)
+inputstring1 = "The freq is:"
+inputstring2 = "%."
+
+try:
+    i = 200
+    while i <= 600:
+        pin.ChangeFrequency(i)
+        x = str(i)
+        i += 200
+        printLCD(inputstring1, x)
+        time.sleep(1)
+except KeyboardInterrupt:
+    pass
+
+
+pin.stop() #stops the pin initialization
+GPIO.cleanup() #cleansup all of the GPIO pins used within the script
+lcd_i2c.cleanup()
+
+print("Done") #informs the user the program is finished running

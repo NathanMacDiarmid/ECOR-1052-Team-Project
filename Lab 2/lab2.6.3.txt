@@ -1,0 +1,38 @@
+import time
+import RPi.GPIO as GPIO
+import lcd_i2c
+
+def printLCD(string1, string2):
+    lcd_i2c.printer(string1, string2)
+def setup():
+    lcd_i2c.lcd_init()
+
+
+GPIO.setmode(GPIO.BCM) 
+GPIO.setup(25, GPIO.OUT) 
+
+
+pin = GPIO.PWM(25,50) 
+pin.start(0) 
+time.sleep(1) 
+
+inputstring1 = "The duty cycle:"
+inputstring2 = "%"
+
+try:
+    i = 0
+    while i < 100:
+        pin.ChangeDutyCycle(i)
+        i += 20
+        x = str(i)
+        printLCD(inputstring1, x)
+        time.sleep(1)
+except KeyboardInterrupt:
+    pass
+
+
+pin.stop() #stops the pin initialization
+GPIO.cleanup() #cleansup all of the GPIO pins used within the script
+lcd_i2c.cleanup()
+
+print("Done") #informs the user the program is finished running
